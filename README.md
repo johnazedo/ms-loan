@@ -5,13 +5,13 @@
 *Endpoints (Emprestimo Consignado):*
 | Endpoint | Http Method | Descrição |
 | -------- | --------- | ----------
-| loan/payroll/v1/simulation |  | Receber valor da parcela, quantidade de vezes e retornar o valor final com os juros aplicados |
+| loan/payroll/v1/simulation | GET | Receber valor da parcela, quantidade de vezes e retornar o valor final com os juros aplicados |
 | loan/payroll/v1/ | POST | Solicitar emprestimo consignado |
 | loan/payroll/v1/ | PUT |Atualizar status corrente do empréstimo |
-| loan/payroll/v1/recurrence | | Solicitar recorrência de cobranças ao módulo de pagamentos/conta corrente* |
-| loan/payroll/v1/request-detail | | Retorno sobre o resultado da solicitação do empréstimo |
-| loan/payroll/v1/cancel | | Negar solicitação de empréstimo |
-| loan/payroll/v1/fee | | Definir a taxa de juros praticada |
+| loan/payroll/v1/recurrence | POST | Informa sobre a recorrência de cobranças ao módulo de pagamentos/conta corrente* |
+| loan/payroll/v1/request-detail | GET | Retorno sobre o resultado da solicitação do empréstimo |
+| loan/payroll/v1/cancel | PUT | Negar solicitação de empréstimo |
+| loan/payroll/v1/fee | PUT | Definir a taxa de juros praticada |
 
 
 
