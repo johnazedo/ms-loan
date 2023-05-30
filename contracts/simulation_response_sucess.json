@@ -1,0 +1,8 @@
+{
+    "http-code": "200",
+    "body": {
+        "user-id": "string",
+        "value-per-month": "float",
+        "installments": "integer"
+    }
+}

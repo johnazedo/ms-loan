@@ -1,0 +1,12 @@
+{
+    "method": "POST",
+    "body": {
+        "user-id": "string",
+        "total-value": "float",
+        "installments": "integer",
+        "contract": {
+            "terms" : "string",
+            "agree-with-the-terms" : "boolean"
+        }
+    }
+}
