@@ -1,0 +1,6 @@
+{
+    "http-code": "400",
+    "body": {
+        "description": "string"
+    }
+}

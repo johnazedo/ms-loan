@@ -10,7 +10,6 @@
 | loan/payroll/v1/ | PUT |Atualizar status corrente do empréstimo |
 | loan/payroll/v1/recurrence | POST | Informa sobre a recorrência de cobranças ao módulo de pagamentos/conta corrente* |
 | loan/payroll/v1/request-detail | GET | Retorno sobre o resultado da solicitação do empréstimo |
-| loan/payroll/v1/cancel | PUT | Negar solicitação de empréstimo |
 | loan/payroll/v1/fee | PUT | Definir a taxa de juros praticada |
 
 

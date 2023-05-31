@@ -1,12 +1,14 @@
 {
     "method": "POST",
+    "http-code": 200,
     "body": {
         "user-id": "string",
         "total-value": "float",
         "installments": "integer",
         "contract": {
             "terms" : "string",
-            "agree-with-the-terms" : "boolean"
+            "agree-with-the-terms" : "boolean",
+            "begin-date": "date"
         }
     }
 }

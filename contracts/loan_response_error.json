@@ -1,6 +1,0 @@
-{
-    "method": "400",
-    "body": {
-        "description" : "Algum dado fornecido foi inválido."
-    }
-}

@@ -1,8 +1,8 @@
 {
     "method": "GET",
-    "body": {
-        "user-id": "string",
-        "total-value": "float",
-        "installments": "integer"
-    }
+    "user-id": "string",
+    "total-value": "float",
+    "installments": "integer",
+    "query-string" : "?user-id=0&total-value=0&installments=0",
+    "body": {}
 }

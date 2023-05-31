@@ -1,0 +1,6 @@
+{
+    "method": "POST",
+    "body": {
+        "fee": "float"
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "method": "GET",
+    "loan-id": "string",
+    "query-string": "?loan-id=0",
+    "body": {}
+}

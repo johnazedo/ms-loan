@@ -1,0 +1,21 @@
+{
+    "method": "POST",
+    "body": {
+        "loan": {
+            "loan-id": "string",
+            "user-id": "string",
+            "installments": "integer",
+            "total-value": "float",
+            "applied-fee": "float",
+            "paid-installments": "integer",
+            "value-per-month": "float",
+            "loan-contract-date": "date",
+            "expected-payment-completion-date": "date",
+            "contract": {
+                "terms": "string",
+                "agree-with-the-terms": "boolean",
+                "begin-date": "date"
+            }
+        }
+    }
+}
