@@ -1,6 +1,6 @@
 {
     "http-code": "200",
     "body": {
-        "fee": "float"
+        "percentage": "float"
     }
 }
