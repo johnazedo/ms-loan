@@ -1,8 +1,7 @@
-package br.ufrn.imd.microservices.msloan.feesetting.controller;
+package br.ufrn.imd.microservices.msloan.feesetting;
 
-import br.ufrn.imd.microservices.msloan.feesetting.dto.FeeDTO;
-import br.ufrn.imd.microservices.msloan.feesetting.model.Fee;
 import br.ufrn.imd.microservices.msloan.util.Endpoint;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,13 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(Endpoint.FEE)
 public class FeeController {
 
+    private final FeeService service;
+
+    @PostMapping
+    public ResponseEntity<FeeDTO> save(@RequestBody @Valid FeeDTO fee) {
+        return ResponseEntity.ok(service.save(fee));
+    }
+
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody Fee fee) {
+    public ResponseEntity<Void> update(@RequestBody FeeDTO fee) {
+        service.update(fee);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Fee> save(@RequestBody FeeDTO fee) {
-        return ResponseEntity.ok(new Fee());
+    public FeeController(FeeService feeService) {
+        this.service = feeService;
     }
 }

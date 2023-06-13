@@ -1,10 +1,10 @@
-package br.ufrn.imd.microservices.msloan.simulation.controller;
+package br.ufrn.imd.microservices.msloan.simulation;
 
-import br.ufrn.imd.microservices.msloan.simulation.dto.SimulationDTO;
 import br.ufrn.imd.microservices.msloan.util.Endpoint;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
@@ -15,7 +15,9 @@ import java.util.UUID;
 public class SimulationController {
 
     @GetMapping
-    public ResponseEntity<SimulationDTO> simulation() {
-        return ResponseEntity.ok(new SimulationDTO(UUID.randomUUID(), BigDecimal.ONE, Integer.MAX_VALUE));
+    public ResponseEntity<SimulationDTO> simulation(@RequestParam String userId,
+                                                    @RequestParam BigDecimal totalValue,
+                                                    @RequestParam int installments ) {
+        return ResponseEntity.ok();
     }
 }

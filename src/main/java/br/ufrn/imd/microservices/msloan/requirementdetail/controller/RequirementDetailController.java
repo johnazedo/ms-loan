@@ -1,6 +1,6 @@
 package br.ufrn.imd.microservices.msloan.requirementdetail.controller;
 
-import br.ufrn.imd.microservices.msloan.payroll.model.PayrollStatus;
+import br.ufrn.imd.microservices.msloan.payroll.PayrollStatus;
 import br.ufrn.imd.microservices.msloan.requirementdetail.dto.RequirementDetailDTO;
 import br.ufrn.imd.microservices.msloan.util.Endpoint;
 import org.springframework.http.ResponseEntity;

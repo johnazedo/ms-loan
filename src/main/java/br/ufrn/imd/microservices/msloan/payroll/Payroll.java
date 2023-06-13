@@ -1,4 +1,4 @@
-package br.ufrn.imd.microservices.msloan.payroll.model;
+package br.ufrn.imd.microservices.msloan.payroll;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

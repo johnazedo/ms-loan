@@ -1,7 +1,4 @@
-package br.ufrn.imd.microservices.msloan.payroll.dto;
-
-import br.ufrn.imd.microservices.msloan.payroll.model.Contract;
-import br.ufrn.imd.microservices.msloan.payroll.model.PayrollStatus;
+package br.ufrn.imd.microservices.msloan.payroll;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
