@@ -1,29 +1,44 @@
 package br.ufrn.imd.microservices.msloan.feesetting.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
+@Document(collection = "fees")
 public class Fee {
 
-    private UUID id;
+    @Id
+    private String id;
     private BigDecimal percentage;
 
-    private LocalDate createdAt;
-    
-    public LocalDate getCreatedAt() {
+    private LocalDateTime createdAt;
+
+    private Boolean active;
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 

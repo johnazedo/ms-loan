@@ -1,22 +1,21 @@
 package br.ufrn.imd.microservices.msloan.payroll.model;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.UUID;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
+
+@Document(collection = "payrolls")
 public class Payroll {
 
-    private UUID id;
-    private String userId;
+    private String id;
+    private Integer accountId;
     private Integer installments;
     private BigDecimal totalValue;
-    private UUID appliedFee;
+    private String appliedFeeId;
     private PayrollStatus status;
     private Integer paidInstallments;
     private BigDecimal valuePerMonth;
-    private LocalDate contractDate;
-    private LocalDate expectedPaymentCompletionDate;
-    private Contract contract;
+    private String contractId;
 
     public PayrollStatus getStatus() {
         return status;
@@ -26,20 +25,20 @@ public class Payroll {
         this.status = status;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getUserId() {
-        return userId;
+    public Integer getAccountId() {
+        return accountId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
     }
 
     public Integer getInstallments() {
@@ -58,12 +57,12 @@ public class Payroll {
         this.totalValue = totalValue;
     }
 
-    public UUID getAppliedFee() {
-        return appliedFee;
+    public String getAppliedFeeId() {
+        return appliedFeeId;
     }
 
-    public void setAppliedFee(UUID appliedFee) {
-        this.appliedFee = appliedFee;
+    public void setAppliedFeeId(String appliedFeeId) {
+        this.appliedFeeId = appliedFeeId;
     }
 
     public Integer getPaidInstallments() {
@@ -82,27 +81,11 @@ public class Payroll {
         this.valuePerMonth = valuePerMonth;
     }
 
-    public LocalDate getContractDate() {
-        return contractDate;
+    public String getContractId() {
+        return contractId;
     }
 
-    public void setContractDate(LocalDate contractDate) {
-        this.contractDate = contractDate;
-    }
-
-    public LocalDate getExpectedPaymentCompletionDate() {
-        return expectedPaymentCompletionDate;
-    }
-
-    public void setExpectedPaymentCompletionDate(LocalDate expectedPaymentCompletionDate) {
-        this.expectedPaymentCompletionDate = expectedPaymentCompletionDate;
-    }
-
-    public Contract getContract() {
-        return contract;
-    }
-
-    public void setContract(Contract contract) {
-        this.contract = contract;
+    public void setContractId(String contract) {
+        this.contractId = contract;
     }
 }
