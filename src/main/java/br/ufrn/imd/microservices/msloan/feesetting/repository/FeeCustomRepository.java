@@ -1,5 +1,6 @@
-package br.ufrn.imd.microservices.msloan.feesetting;
+package br.ufrn.imd.microservices.msloan.feesetting.repository;
 
+import br.ufrn.imd.microservices.msloan.feesetting.model.Fee;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -15,7 +16,7 @@ public class FeeCustomRepository {
         this.mongoTemplate = mongoTemplate;
     }
 
-    void updateAllActive(){
+    public void updateAllActive(){
         Query query = new Query().addCriteria(Criteria.where("active").is(true));
         Update update = new Update().set("active", false);
         mongoTemplate.update(Fee.class).matching(query).apply(update).all();

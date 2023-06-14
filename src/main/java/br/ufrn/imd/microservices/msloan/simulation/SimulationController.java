@@ -1,23 +1,25 @@
 package br.ufrn.imd.microservices.msloan.simulation;
 
-import br.ufrn.imd.microservices.msloan.util.Endpoint;
+import br.ufrn.imd.microservices.msloan.core.util.Endpoint;
+import br.ufrn.imd.microservices.msloan.payroll.service.PayrollService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.math.BigDecimal;
-import java.util.UUID;
 
 @RestController
 @RequestMapping(Endpoint.SIMULATION)
 public class SimulationController {
 
-    @GetMapping
-    public ResponseEntity<SimulationDTO> simulation(@RequestParam String userId,
-                                                    @RequestParam BigDecimal totalValue,
-                                                    @RequestParam int installments ) {
-        return ResponseEntity.ok();
+    private final PayrollService payrollService;
+
+    @PostMapping
+    public ResponseEntity<PayrollLoanSimulatedDto> simulation(@RequestBody PayrollLoanSimulationDto simulation) {
+        return ResponseEntity.ok(payrollService.simulatePayrollLoan(simulation));
+    }
+
+    public SimulationController(PayrollService payrollService) {
+        this.payrollService = payrollService;
     }
 }

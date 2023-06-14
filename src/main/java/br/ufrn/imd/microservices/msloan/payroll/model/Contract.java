@@ -1,21 +1,23 @@
-package br.ufrn.imd.microservices.msloan.payroll;
+package br.ufrn.imd.microservices.msloan.payroll.model;
+
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
+@Document(collection = "contracts")
 public class Contract {
 
-    private UUID id;
-
+    private String id;
     private String terms;
     private boolean agreeWithTerms;
     private LocalDate beginDate;
+    private LocalDate expectedPaymentCompletionDate;
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -41,5 +43,13 @@ public class Contract {
 
     public void setBeginDate(LocalDate beginDate) {
         this.beginDate = beginDate;
+    }
+
+    public LocalDate getExpectedPaymentCompletionDate() {
+        return expectedPaymentCompletionDate;
+    }
+
+    public void setExpectedPaymentCompletionDate(LocalDate expectedPaymentCompletionDate) {
+        this.expectedPaymentCompletionDate = expectedPaymentCompletionDate;
     }
 }

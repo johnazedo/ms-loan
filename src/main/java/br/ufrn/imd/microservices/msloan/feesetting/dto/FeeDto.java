@@ -1,13 +1,13 @@
-package br.ufrn.imd.microservices.msloan.feesetting;
+package br.ufrn.imd.microservices.msloan.feesetting.dto;
 
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-public record FeeDTO(String id,
+public record FeeDto(String id,
                      @NotNull
                      BigDecimal percentage,
-                     LocalDate createdAt,
+                     LocalDateTime createdAt,
                      boolean active) {
 }

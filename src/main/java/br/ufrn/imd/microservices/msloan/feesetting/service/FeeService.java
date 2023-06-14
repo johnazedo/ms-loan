@@ -1,11 +1,16 @@
-package br.ufrn.imd.microservices.msloan.feesetting;
+package br.ufrn.imd.microservices.msloan.feesetting.service;
 
 import br.ufrn.imd.microservices.msloan.core.exceptions.NotFoundException;
+import br.ufrn.imd.microservices.msloan.core.exceptions.InvalidFeeException;
+import br.ufrn.imd.microservices.msloan.feesetting.dto.FeeDto;
+import br.ufrn.imd.microservices.msloan.feesetting.model.Fee;
+import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeCustomRepository;
+import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class FeeService {
@@ -19,7 +24,7 @@ public class FeeService {
     }
 
     @Transactional
-    public FeeDTO save(FeeDTO feeDTO) {
+    public FeeDto save(FeeDto feeDTO) {
         if(feeDTO.percentage().compareTo(BigDecimal.ZERO) <= 0){
             throw new InvalidFeeException("Fee less or equal to zero.");
         }
@@ -27,18 +32,18 @@ public class FeeService {
         Fee fee = new Fee();
         fee.setActive(true);
         fee.setPercentage(feeDTO.percentage());
-        fee.setCreatedAt(LocalDate.now());
+        fee.setCreatedAt(LocalDateTime.now());
 
         customRepository.updateAllActive();
         Fee saved = repository.save(fee);
 
-        return new FeeDTO(saved.getId(),
+        return new FeeDto(saved.getId(),
                 saved.getPercentage(),
                 saved.getCreatedAt(),
                 saved.getActive());
     }
 
-    public void update(FeeDTO feeDTO) {
+    public void update(FeeDto feeDTO) {
         Fee feeSaved = repository.findById(feeDTO.id())
                 .orElseThrow(() -> new NotFoundException("Fee don't exists"));
 
