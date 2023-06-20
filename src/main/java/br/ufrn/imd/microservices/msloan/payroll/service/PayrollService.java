@@ -3,6 +3,8 @@ package br.ufrn.imd.microservices.msloan.payroll.service;
 import br.ufrn.imd.microservices.msloan.core.client.CurrentAccountClient;
 import br.ufrn.imd.microservices.msloan.core.exceptions.NotFoundException;
 import br.ufrn.imd.microservices.msloan.core.exceptions.PayrollException;
+import br.ufrn.imd.microservices.msloan.core.log.Log;
+import br.ufrn.imd.microservices.msloan.core.log.LogSender;
 import br.ufrn.imd.microservices.msloan.feesetting.model.Fee;
 import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeRepository;
 import br.ufrn.imd.microservices.msloan.payroll.dto.PayrollOutDto;
@@ -17,6 +19,7 @@ import br.ufrn.imd.microservices.msloan.payroll.repository.PayrollRepository;
 import br.ufrn.imd.microservices.msloan.requirementdetail.dto.RequirementDetailDto;
 import br.ufrn.imd.microservices.msloan.simulation.PayrollLoanSimulatedDto;
 import br.ufrn.imd.microservices.msloan.simulation.PayrollLoanSimulationDto;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,7 @@ public class PayrollService {
     private final PayrollRepository payrollRepository;
     private final PayrollMapper payrollMapper;
     private final CurrentAccountClient currentAccountClient;
+    private final LogSender logger;
 
     public PayrollLoanSimulatedDto simulatePayrollLoan(PayrollLoanSimulationDto simulation) {
         BigDecimal approved = approvedValueByAccount(simulation.accountId());
@@ -40,6 +44,14 @@ public class PayrollService {
         if (simulation.totalValue().compareTo(approved) > 0) {
             throw new PayrollException("Usuário não pode solicitar empréstime para este valor.");
         }
+
+        logger.send(new Log.LogBuilder()
+                .setClazz(this.getClass().getName())
+                .setMethod("simulation")
+                .setContext("main")
+                .setLevel(LogLevel.INFO)
+                .setMessage("simulation payroll by: " + simulation.accountId())
+                .build());
 
         return payrollLoanCalculate(simulation.totalValue(), simulation.installments());
 
@@ -113,6 +125,14 @@ public class PayrollService {
 //        TODO
 //        currentAccountClient.postRecurrence(payroll);
 
+        logger.send(new Log.LogBuilder()
+                .setClazz(this.getClass().getName())
+                .setMethod("save")
+                .setContext("main")
+                .setLevel(LogLevel.INFO)
+                .setMessage("save payroll: " + payroll.getId())
+                .build());
+
         return payrollMapper.entityToOutDto(payroll);
 
     }
@@ -121,12 +141,14 @@ public class PayrollService {
                           CurrentAccountClient currentAccountClient,
                           ContractRepository contractRepository,
                           PayrollRepository payrollRepository,
-                          PayrollMapper payrollMapper) {
+                          PayrollMapper payrollMapper,
+                          LogSender logger) {
         this.feeRepository = feeRepository;
         this.currentAccountClient = currentAccountClient;
         this.contractRepository = contractRepository;
         this.payrollRepository = payrollRepository;
         this.payrollMapper = payrollMapper;
+        this.logger = logger;
     }
 
     public PayrollOutDto update(PayrollPutDto payrollDto) {
@@ -140,11 +162,28 @@ public class PayrollService {
 //        TODO
 //        currentAccountClient.postRecurrence(payroll);
 
+        logger.send(new Log.LogBuilder()
+                .setClazz(this.getClass().getName())
+                .setMethod("update")
+                .setContext("main")
+                .setLevel(LogLevel.INFO)
+                .setMessage("payroll: " + payroll.getId())
+                .build());
+
         return payrollMapper.entityToOutDto(payroll);
     }
 
     public List<RequirementDetailDto> findPayrolls(Integer accountId) {
         List<Payroll> payrolls = payrollRepository.findAllByAccountId(accountId);
+
+        logger.send(new Log.LogBuilder()
+                .setClazz(this.getClass().getName())
+                .setMethod("findPayrolls")
+                .setContext("main")
+                .setLevel(LogLevel.INFO)
+                .setMessage("find all payrolls with accountId: " + accountId)
+                .build());
+
         return payrolls.stream()
                 .map(payrollMapper::entityToRequirementDetail)
                 .toList();

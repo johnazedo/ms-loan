@@ -2,10 +2,13 @@ package br.ufrn.imd.microservices.msloan.feesetting.service;
 
 import br.ufrn.imd.microservices.msloan.core.exceptions.NotFoundException;
 import br.ufrn.imd.microservices.msloan.core.exceptions.InvalidFeeException;
+import br.ufrn.imd.microservices.msloan.core.log.Log;
+import br.ufrn.imd.microservices.msloan.core.log.LogSender;
 import br.ufrn.imd.microservices.msloan.feesetting.dto.FeeDto;
 import br.ufrn.imd.microservices.msloan.feesetting.model.Fee;
 import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeCustomRepository;
 import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeRepository;
+import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +20,12 @@ public class FeeService {
 
     private final FeeRepository repository;
     private final FeeCustomRepository customRepository;
+    private final LogSender logger;
 
-    public FeeService(FeeRepository feeRepository, FeeCustomRepository customRepository) {
+    public FeeService(FeeRepository feeRepository, FeeCustomRepository customRepository, LogSender logger) {
         this.repository = feeRepository;
         this.customRepository = customRepository;
+        this.logger = logger;
     }
 
     @Transactional
@@ -36,6 +41,14 @@ public class FeeService {
 
         customRepository.updateAllActive();
         Fee saved = repository.save(fee);
+
+        logger.send(new Log.LogBuilder()
+                .setClazz(this.getClass().getName())
+                .setMethod("save")
+                .setContext("main")
+                .setLevel(LogLevel.INFO)
+                .setMessage("Fee saved: " + saved.getId())
+                .build());
 
         return new FeeDto(saved.getId(),
                 saved.getPercentage(),
@@ -53,5 +66,13 @@ public class FeeService {
 
         feeSaved.setPercentage(feeDTO.percentage());
         repository.save(feeSaved);
+
+        logger.send(new Log.LogBuilder()
+                .setClazz(this.getClass().getName())
+                .setMethod("update")
+                .setContext("main")
+                .setLevel(LogLevel.INFO)
+                .setMessage("Fee updated: " + feeSaved.getId())
+                .build());
     }
 }
