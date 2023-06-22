@@ -7,6 +7,7 @@ import br.ufrn.imd.microservices.msloan.core.log.Log;
 import br.ufrn.imd.microservices.msloan.core.log.LogSender;
 import br.ufrn.imd.microservices.msloan.feesetting.model.Fee;
 import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeRepository;
+import br.ufrn.imd.microservices.msloan.payroll.dto.CheckDto;
 import br.ufrn.imd.microservices.msloan.payroll.dto.PayrollOutDto;
 import br.ufrn.imd.microservices.msloan.payroll.dto.PayrollPostDto;
 import br.ufrn.imd.microservices.msloan.payroll.dto.PayrollPutDto;
@@ -26,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PayrollService {
@@ -38,11 +41,25 @@ public class PayrollService {
     private final CurrentAccountClient currentAccountClient;
     private final LogSender logger;
 
+    public PayrollService(FeeRepository feeRepository,
+                          CurrentAccountClient currentAccountClient,
+                          ContractRepository contractRepository,
+                          PayrollRepository payrollRepository,
+                          PayrollMapper payrollMapper,
+                          LogSender logger) {
+        this.feeRepository = feeRepository;
+        this.currentAccountClient = currentAccountClient;
+        this.contractRepository = contractRepository;
+        this.payrollRepository = payrollRepository;
+        this.payrollMapper = payrollMapper;
+        this.logger = logger;
+    }
+
     public PayrollLoanSimulatedDto simulatePayrollLoan(PayrollLoanSimulationDto simulation) {
         BigDecimal approved = approvedValueByAccount(simulation.accountId());
 
         if (simulation.totalValue().compareTo(approved) > 0) {
-            throw new PayrollException("Usuário não pode solicitar empréstime para este valor.");
+            throw new PayrollException("Usuário não pode solicitar empréstimo para este valor.");
         }
 
         logger.send(new Log.LogBuilder()
@@ -77,14 +94,17 @@ public class PayrollService {
     }
 
     private BigDecimal approvedValueByAccount(Integer accountId) {
-//        List<Check> checks = currentAccountClient.allChecksByAccount(accountId);
-//        Check check = checks.stream()
-//                .max((check1, check2) -> check1.limite().compareTo(check2.limite()))
+        BigDecimal defaultApprovedValue = BigDecimal.valueOf(10_000);
+          //TODO
+//        List<CheckDto> checks = currentAccountClient.allChecksByAccount(accountId);
+//        BigDecimal calculatedValue = checks.stream()
+//                .max(Comparator.comparing(CheckDto::limite))
+//                .map(checkDto -> checkDto.limite().multiply(BigDecimal.TEN))
 //                .orElseThrow(NoSuchElementException::new);
-
-//        TODO
-//        return check.limite().multiply(BigDecimal.TEN);
-        return BigDecimal.valueOf(Long.MAX_VALUE);
+//
+//        if (calculatedValue.compareTo(defaultApprovedValue) > 0) return calculatedValue;
+//        else return defaultApprovedValue;
+        return defaultApprovedValue;
     }
 
     @Transactional
@@ -122,9 +142,6 @@ public class PayrollService {
 
         payroll = payrollRepository.save(payroll);
 
-//        TODO
-//        currentAccountClient.postRecurrence(payroll);
-
         logger.send(new Log.LogBuilder()
                 .setClazz(this.getClass().getName())
                 .setMethod("save")
@@ -137,19 +154,6 @@ public class PayrollService {
 
     }
 
-    public PayrollService(FeeRepository feeRepository,
-                          CurrentAccountClient currentAccountClient,
-                          ContractRepository contractRepository,
-                          PayrollRepository payrollRepository,
-                          PayrollMapper payrollMapper,
-                          LogSender logger) {
-        this.feeRepository = feeRepository;
-        this.currentAccountClient = currentAccountClient;
-        this.contractRepository = contractRepository;
-        this.payrollRepository = payrollRepository;
-        this.payrollMapper = payrollMapper;
-        this.logger = logger;
-    }
 
     public PayrollOutDto update(PayrollPutDto payrollDto) {
         Payroll payrollSaved = payrollRepository.findById(payrollDto.id())
@@ -158,9 +162,6 @@ public class PayrollService {
         Payroll payroll = payrollMapper.putDtoToEntity(payrollDto);
         payroll.setId(payrollSaved.getId());
         payrollRepository.save(payroll);
-
-//        TODO
-//        currentAccountClient.postRecurrence(payroll);
 
         logger.send(new Log.LogBuilder()
                 .setClazz(this.getClass().getName())
@@ -187,5 +188,14 @@ public class PayrollService {
         return payrolls.stream()
                 .map(payrollMapper::entityToRequirementDetail)
                 .toList();
+    }
+
+    public String paymentDay() {
+        String result = "";
+
+
+
+
+        return result;
     }
 }

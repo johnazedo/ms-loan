@@ -12,6 +12,7 @@ public class Contract {
     private boolean agreeWithTerms;
     private LocalDate beginDate;
     private LocalDate expectedPaymentCompletionDate;
+    private LocalDate monthlyPayment;
 
     public String getId() {
         return id;
@@ -51,5 +52,13 @@ public class Contract {
 
     public void setExpectedPaymentCompletionDate(LocalDate expectedPaymentCompletionDate) {
         this.expectedPaymentCompletionDate = expectedPaymentCompletionDate;
+    }
+
+    public LocalDate getMonthlyPayment() {
+        return monthlyPayment;
+    }
+
+    public void setMonthlyPayment(LocalDate monthlyPayment) {
+        this.monthlyPayment = monthlyPayment;
     }
 }
