@@ -1,6 +1,7 @@
 package br.ufrn.imd.microservices.msloan.payroll.service;
 
 import br.ufrn.imd.microservices.msloan.core.client.CurrentAccountClient;
+import br.ufrn.imd.microservices.msloan.core.client.PaymentClient;
 import br.ufrn.imd.microservices.msloan.core.exceptions.NotFoundException;
 import br.ufrn.imd.microservices.msloan.core.exceptions.PayrollException;
 import br.ufrn.imd.microservices.msloan.core.log.Log;
@@ -20,6 +21,7 @@ import br.ufrn.imd.microservices.msloan.payroll.repository.PayrollRepository;
 import br.ufrn.imd.microservices.msloan.requirementdetail.dto.RequirementDetailDto;
 import br.ufrn.imd.microservices.msloan.simulation.PayrollLoanSimulatedDto;
 import br.ufrn.imd.microservices.msloan.simulation.PayrollLoanSimulationDto;
+import feign.RetryableException;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,7 @@ public class PayrollService {
     private final PayrollRepository payrollRepository;
     private final PayrollMapper payrollMapper;
     private final CurrentAccountClient currentAccountClient;
+    private final PaymentClient paymentClient;
     private final LogSender logger;
 
     public PayrollService(FeeRepository feeRepository,
@@ -46,12 +49,14 @@ public class PayrollService {
                           ContractRepository contractRepository,
                           PayrollRepository payrollRepository,
                           PayrollMapper payrollMapper,
+                          PaymentClient paymentClient,
                           LogSender logger) {
         this.feeRepository = feeRepository;
         this.currentAccountClient = currentAccountClient;
         this.contractRepository = contractRepository;
         this.payrollRepository = payrollRepository;
         this.payrollMapper = payrollMapper;
+        this.paymentClient = paymentClient;
         this.logger = logger;
     }
 
@@ -95,16 +100,25 @@ public class PayrollService {
 
     private BigDecimal approvedValueByAccount(Integer accountId) {
         BigDecimal defaultApprovedValue = BigDecimal.valueOf(10_000);
-          //TODO
-//        List<CheckDto> checks = currentAccountClient.allChecksByAccount(accountId);
-//        BigDecimal calculatedValue = checks.stream()
-//                .max(Comparator.comparing(CheckDto::limite))
-//                .map(checkDto -> checkDto.limite().multiply(BigDecimal.TEN))
-//                .orElseThrow(NoSuchElementException::new);
-//
-//        if (calculatedValue.compareTo(defaultApprovedValue) > 0) return calculatedValue;
-//        else return defaultApprovedValue;
-        return defaultApprovedValue;
+        BigDecimal calculatedValue = BigDecimal.ZERO;
+        try {
+            List<CheckDto> checks = currentAccountClient.allChecksByAccount(accountId);
+            calculatedValue = checks.stream()
+                    .max(Comparator.comparing(CheckDto::limite))
+                    .map(checkDto -> checkDto.limite().multiply(BigDecimal.TEN))
+                    .orElseThrow(NoSuchElementException::new);
+        } catch (RetryableException e) {
+            logger.send(new Log.LogBuilder()
+                    .setClazz(currentAccountClient.getClass().getName())
+                    .setMethod("approvedValueByAccount")
+                    .setContext("main")
+                    .setLevel(LogLevel.ERROR)
+                    .setMessage("allChecksByAccount in currentAccount offline")
+                    .build());
+        }
+
+        if (calculatedValue.compareTo(defaultApprovedValue) > 0) return calculatedValue;
+        else return defaultApprovedValue;
     }
 
     @Transactional
@@ -141,6 +155,7 @@ public class PayrollService {
         payroll.setContractId(contract.getId());
 
         payroll = payrollRepository.save(payroll);
+        //TODO currentAccountClient.updateBalance(payroll.getAccountId(), );
 
         logger.send(new Log.LogBuilder()
                 .setClazz(this.getClass().getName())
@@ -190,12 +205,15 @@ public class PayrollService {
                 .toList();
     }
 
-    public String paymentDay() {
-        String result = "";
+    public boolean paymentDay() {
+        List<Payroll> payrolls = payrollRepository.findAll();
 
+        for (Payroll payroll : payrolls) {
+            if (payroll.getInstallments() < payroll.getPaidInstallments()) {
+                //TODO paymentClient.payMonthlyInstallment();
+            }
+        }
 
-
-
-        return result;
+        return true;
     }
 }

@@ -18,16 +18,16 @@ public class Scheduler {
         this.logger = logger;
     }
 
-    @Scheduled(cron = "0 0 0 1 * ?")
+    @Scheduled(cron = "* * * 5 * *")
     private void execute() {
-        String result = payrollService.paymentDay();
+        boolean result = payrollService.paymentDay();
 
         logger.send(new Log.LogBuilder()
                 .setClazz(this.getClass().getName())
                 .setMethod("paymentDay")
                 .setContext("job")
                 .setLevel(LogLevel.INFO)
-                .setMessage(result)
+                .setMessage("All payrolls are paid: " + result)
                 .build());
     }
 }
