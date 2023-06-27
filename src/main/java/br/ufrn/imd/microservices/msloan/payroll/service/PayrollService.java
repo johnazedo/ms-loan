@@ -6,8 +6,10 @@ import br.ufrn.imd.microservices.msloan.core.exceptions.NotFoundException;
 import br.ufrn.imd.microservices.msloan.core.exceptions.PayrollException;
 import br.ufrn.imd.microservices.msloan.core.log.Log;
 import br.ufrn.imd.microservices.msloan.core.log.LogSender;
+import br.ufrn.imd.microservices.msloan.feesetting.dto.FeeDto;
 import br.ufrn.imd.microservices.msloan.feesetting.model.Fee;
 import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeRepository;
+import br.ufrn.imd.microservices.msloan.feesetting.service.FeeService;
 import br.ufrn.imd.microservices.msloan.payroll.dto.CheckDto;
 import br.ufrn.imd.microservices.msloan.payroll.dto.PayrollOutDto;
 import br.ufrn.imd.microservices.msloan.payroll.dto.PayrollPostDto;
@@ -32,11 +34,13 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class PayrollService {
 
     private final FeeRepository feeRepository;
+    private final FeeService feeService;
     private final ContractRepository contractRepository;
     private final PayrollRepository payrollRepository;
     private final PayrollMapper payrollMapper;
@@ -45,6 +49,7 @@ public class PayrollService {
     private final LogSender logger;
 
     public PayrollService(FeeRepository feeRepository,
+                          FeeService feeService,
                           CurrentAccountClient currentAccountClient,
                           ContractRepository contractRepository,
                           PayrollRepository payrollRepository,
@@ -52,6 +57,7 @@ public class PayrollService {
                           PaymentClient paymentClient,
                           LogSender logger) {
         this.feeRepository = feeRepository;
+        this.feeService = feeService;
         this.currentAccountClient = currentAccountClient;
         this.contractRepository = contractRepository;
         this.payrollRepository = payrollRepository;
@@ -81,6 +87,13 @@ public class PayrollService {
 
     private PayrollLoanSimulatedDto payrollLoanCalculate(BigDecimal totalValue, int installments) {
         Fee fee = feeRepository.findByActiveEquals(true);
+
+        if(Objects.isNull(fee)){
+            FeeDto defaultFee = new FeeDto(null, BigDecimal.TEN, null, true);
+            feeService.save(defaultFee);
+
+            fee = feeRepository.findByActiveEquals(true);
+        }
 
         BigDecimal feeOverSimulationTotalValue = totalValue
                 .multiply(fee.getPercentage()
