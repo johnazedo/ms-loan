@@ -28,6 +28,7 @@ public class Scheduler {
                 .setContext("job")
                 .setLevel(LogLevel.INFO)
                 .setMessage("All payrolls are paid: " + result)
+                .setIp("localhost")
                 .build());
     }
 }

@@ -11,6 +11,8 @@ import br.ufrn.imd.microservices.msloan.feesetting.repository.FeeRepository;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,6 +50,8 @@ public class FeeService {
                 .setContext("main")
                 .setLevel(LogLevel.INFO)
                 .setMessage("Fee saved: " + saved.getId())
+                .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr())
                 .build());
 
         return new FeeDto(saved.getId(),
@@ -73,6 +77,8 @@ public class FeeService {
                 .setContext("main")
                 .setLevel(LogLevel.INFO)
                 .setMessage("Fee updated: " + feeSaved.getId())
+                .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr())
                 .build());
     }
 }

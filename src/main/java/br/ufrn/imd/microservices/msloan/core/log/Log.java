@@ -1,17 +1,15 @@
 package br.ufrn.imd.microservices.msloan.core.log;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.logging.LogLevel;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class Log {
 
-    private final LocalDateTime timestamp;
+    private final String timestamp;
     private final LogLevel level;
     private final String microservice;
     private final String thread;
@@ -22,7 +20,7 @@ public class Log {
     private final String context;
     private final String ip;
 
-    public LocalDateTime getTimestamp() {
+    public String getTimestamp() {
         return timestamp;
     }
 
@@ -72,10 +70,7 @@ public class Log {
 
     public static class LogBuilder {
 
-        @Value("${spring.application.name}")
-        private String applicationName;
-
-        private final LocalDateTime timestamp;
+        private final String timestamp;
         private LogLevel level;
         private final String microservice;
         private final String thread;
@@ -83,14 +78,14 @@ public class Log {
         private String method;
         private String message;
         private String context;
-        private final String ip;
+        private String ip;
 
         public LogBuilder() {
-            this.timestamp = LocalDateTime.now();
-            this.microservice = applicationName;
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+            this.timestamp = LocalDateTime.now().format(dtf);
+            this.microservice = "loan";
             this.thread = Thread.currentThread().getName();
-            this.ip = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-                    .getRequest().getRemoteAddr();
+            this.context = "default";
         }
 
         public LogBuilder setLevel(LogLevel level) {
@@ -115,6 +110,11 @@ public class Log {
 
         public LogBuilder setContext(String context) {
             this.context = context;
+            return this;
+        }
+
+        public LogBuilder setIp(String ip) {
+            this.ip = ip;
             return this;
         }
 

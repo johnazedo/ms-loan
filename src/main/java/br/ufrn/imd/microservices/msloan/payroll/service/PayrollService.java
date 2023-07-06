@@ -27,6 +27,8 @@ import feign.RetryableException;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -79,6 +81,8 @@ public class PayrollService {
                 .setContext("main")
                 .setLevel(LogLevel.INFO)
                 .setMessage("simulation payroll by: " + simulation.accountId())
+                .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr())
                 .build());
 
         return payrollLoanCalculate(simulation.totalValue(), simulation.installments());
@@ -127,6 +131,8 @@ public class PayrollService {
                     .setContext("main")
                     .setLevel(LogLevel.ERROR)
                     .setMessage("allChecksByAccount in currentAccount offline")
+                    .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                            .getRequest().getRemoteAddr())
                     .build());
         }
 
@@ -176,6 +182,8 @@ public class PayrollService {
                 .setContext("main")
                 .setLevel(LogLevel.INFO)
                 .setMessage("save payroll: " + payroll.getId())
+                .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr())
                 .build());
 
         return payrollMapper.entityToOutDto(payroll);
@@ -197,6 +205,8 @@ public class PayrollService {
                 .setContext("main")
                 .setLevel(LogLevel.INFO)
                 .setMessage("payroll: " + payroll.getId())
+                .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr())
                 .build());
 
         return payrollMapper.entityToOutDto(payroll);
@@ -211,6 +221,8 @@ public class PayrollService {
                 .setContext("main")
                 .setLevel(LogLevel.INFO)
                 .setMessage("find all payrolls with accountId: " + accountId)
+                .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr())
                 .build());
 
         return payrolls.stream()
