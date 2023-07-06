@@ -174,7 +174,7 @@ public class PayrollService {
         payroll.setContractId(contract.getId());
 
         payroll = payrollRepository.save(payroll);
-        //TODO currentAccountClient.updateBalance(payroll.getAccountId(), );
+        //TODO currentAccountClient.updateBalance(payroll.getAccountId(), payroll.getTotalValue());
 
         logger.send(new Log.LogBuilder()
                 .setClazz(this.getClass().getName())
@@ -240,5 +240,23 @@ public class PayrollService {
         }
 
         return true;
+    }
+
+    public List<PayrollOutDto> findAll() {
+        List<Payroll> payrolls = payrollRepository.findAll();
+
+        logger.send(new Log.LogBuilder()
+                .setClazz(this.getClass().getName())
+                .setMethod("findAll")
+                .setContext("main")
+                .setLevel(LogLevel.INFO)
+                .setMessage("find all payrolls")
+                .setIp(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr())
+                .build());
+
+        return payrolls.stream()
+                .map(payrollMapper::entityToOutDto)
+                .toList();
     }
 }
